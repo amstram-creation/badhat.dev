@@ -17,8 +17,9 @@
     --text-dim: #7a8090;
     --white: #ffffff;
     --sidebar-w: 260px;
-    --mono: 'Courier New', Courier, monospace;
-    --sans: 'Segoe UI', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'JetBrains Mono', monospace;
+
 }
 
 html,
@@ -93,12 +94,12 @@ body {
 }
 
 .sidebar-nav li:last-child a {
-    color: var(--cyan);
+    color: #0011FF;
 }
 
 .sidebar-nav li:last-child a:hover {
     color: var(--white);
-    background: rgba(0, 200, 212, .08);
+    background: rgba(0, 17, 255, .08);
 }
 
 .site-footer {
@@ -254,9 +255,10 @@ main {
     letter-spacing: .08em;
     text-transform: uppercase;
     margin-bottom: 16px;
+    
 }
-
 .home-what p {
+    font-family: 'Inter', sans-serif;
     font-size: 13px;
     color: var(--text);
     line-height: 1.85;
