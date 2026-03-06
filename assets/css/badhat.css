@@ -102,7 +102,7 @@ body {
     background: rgba(0, 17, 255, .08);
 }
 
-.site-footer{
+.slogan{
     margin-top: auto;
     font-size: 11px;
     color: var(--text-dim);
