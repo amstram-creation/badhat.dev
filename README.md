@@ -8,7 +8,6 @@ Ce site de documentation a été construit avec des technologies web fondamental
 - **CSS3** — layout complet avec Flexbox et CSS Grid, variables CSS, transitions et media queries pour le responsive
 - **JavaScript** — script léger pour le scrollspy (IntersectionObserver) et le toggle de navigation mobile
 - **Highlight.js** — coloration syntaxique des blocs de code (PHP, Bash)
-- **JetBrains Mono / Inter** — typographies via Google Fonts
 
 ## Développement
 

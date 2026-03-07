@@ -17,8 +17,8 @@
     --text-dim: #7a8090;
     --white: #ffffff;
     --sidebar-w: 260px;
-    --mono: 'JetBrains Mono', monospace;
-    --sans: 'JetBrains Mono', monospace;
+    --mono: monospace;
+    --sans: monospace;
 
 }
 
