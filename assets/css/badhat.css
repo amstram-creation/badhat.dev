@@ -187,67 +187,55 @@ main {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 40px;
+    gap: 2rem;
     width: 100%;
-    padding: 80px 70px;
-    margin-top: 40px;
+    padding: 6rem 5rem;
 }
 
-.home-content::before,
-.home-content::after,
-.home-content .corner-br,
-.home-content .corner-bl {
+.framed::before,
+.framed::after{
     content: '';
     position: absolute;
-    width: 48px;
-    height: 48px;
+    width: 3rem;
+    height: 3rem;
     border-color: var(--cyan);
     border-style: solid;
 }
 
-.home-content::before {
+.home-show::before{
     top: 0;
     left: 0;
     border-width: 3px 0 0 3px;
 }
-
-.home-content::after {
+.home-show::after {
     top: 0;
     right: 0;
     border-width: 3px 3px 0 0;
 }
-
-.home-content .corner-br {
+.home-tell::before{
     bottom: 0;
     right: 0;
     border-width: 0 3px 3px 0;
 }
-
-.home-content .corner-bl {
+.home-tell::after{
     bottom: 0;
     left: 0;
     border-width: 0 0 3px 3px;
 }
 
-.home-frame {
-    position: relative;
-    display: inline-block;
-    flex-shrink: 0;
-}
-
-.home-frame img {
+#home img {
     width: 180px;
     display: block;
     filter: grayscale(100%);
     border-radius: 2px;
 }
 
-.home-what {
+.home-tell {
     text-align: left;
     flex: 1;
 }
 
-.home-what h2 {
+.home-tell h2 {
     font-family: var(--mono);
     font-size: 20px;
     font-weight: 700;
@@ -257,7 +245,7 @@ main {
     margin-bottom: 16px;
     
 }
-.home-what p {
+.home-tell p {
     font-family: 'Inter', sans-serif;
     font-size: 13px;
     color: var(--text);
@@ -265,7 +253,7 @@ main {
     text-align: justify;
 }
 
-.home-what strong {
+.home-tell strong {
     color: var(--white);
 }
 
