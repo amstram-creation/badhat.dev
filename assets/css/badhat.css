@@ -88,6 +88,7 @@ body>header{
 body>main{
     overflow-x:none;
     overflow-y:scroll;
+    width:100%;
 }
 
 
@@ -134,14 +135,6 @@ body>main{
     background: rgba(255, 255, 255, 0.05);
 }
 
-.sidebar-nav li:last-child a {
-    color: #0011FF;
-}
-
-.sidebar-nav li:last-child a:hover {
-    color: var(--c-text-hard);
-    background: rgba(0, 17, 255, 0.08);
-}
 
 .slogan {
     margin-top: auto;
