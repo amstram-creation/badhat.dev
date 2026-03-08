@@ -59,7 +59,7 @@
             <div class="home-inner">
                 <header>
                     <h1 class="home-title">BAD|HAT</h1>
-                    <p class="home-tagline">Bits As Decision.<br>HTTP As Terminal.</p>
+                    <p class="home-tagline">bits as decision<br>http as terminal</p>
                 </header>
 
                 <div class="home-content">
@@ -70,8 +70,10 @@
                     <div class="home-tell framed">
                         <h2>What is BADHAT?</h2>
                         <p>BADHAT is a emergent execution model for PHP.</p>
-                        <p>it builds from the language, the filesystem, and the request itself. Path maps to file, files run, output is explicit, and control stays visible.</p>
-                        <p><span>no</span> hidden lifecycle. <span>no</span> container. <span>no</span> generated abstraction layer. Just hook, map, run, and emit.</p>
+                        <p>it builds from the language, the filesystem, and the request itself. Path maps to file, files
+                            run, output is explicit, and control stays visible.</p>
+                        <p><span>no</span> hidden lifecycle. <span>no</span> container. <span>no</span> generated
+                            abstraction layer. Just hook, map, run, and emit.</p>
                     </div>
                 </div>
 
@@ -79,13 +81,20 @@
         </section>
 
         <!-- ═══════════ QUICKSTART ═══════════ -->
-        <div class="breadcrumb">bad/boot</div>
+
         <section id="boot" class="section-content">
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a class="hljs-title" href="#home">bad</a></li>
+                    <li class="breadcrumb-item hljs-title" aria-current="page">boot</li>
+                </ol>
+            </nav>
             <header>
-                <h1 class="section-title">Quickstart</h1>
+
+                <h2 class="section-title">Quickstart</h2>
                 <p class="section-subtitle">Get BADHAT running in five minutes</p>
             </header>
-                
+
             <div class="qs-step">
                 <h2>1. Initialize Project</h2>
                 <pre><code class="language-bash">mkdir myproject && cd myproject
@@ -275,9 +284,15 @@ git subtree pull --prefix=add/badhat FETCH_HEAD --squash</code></pre>
         </section>
 
         <!-- ═══════════ DOCS ═══════════ -->
-        <div class="breadcrumb">Home/Docs</div>
         <section id="docs" class="section-content">
-            <h1 class="section-title">Docs</h1>
+
+            <nav class="breadcrumb" aria-label="Breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a class="hljs-title" href="#home">bad</a></li>
+                    <li class="breadcrumb-item hljs-title" aria-current="page">docs</li>
+                </ol>
+            </nav>
+            <h2 class="section-title">Docs</h2>
 
             <nav class="module-nav">
                 <button onclick="document.getElementById('map').scrollIntoView({behavior:'smooth'})">Map</button>
@@ -363,10 +378,15 @@ git subtree pull --prefix=add/badhat FETCH_HEAD --squash</code></pre>
         </section>
 
         <!-- ═══════════ EXAMPLES ═══════════ -->
-        <div class="breadcrumb">Home/Examples</div>
         <section id="examples" class="section-content">
             <header>
-                <h1 class="section-title">Examples</h1>
+                <nav class="breadcrumb" aria-label="Breadcrumb">
+                    <ol class="breadcrumb-list">
+                        <li class="breadcrumb-item"><a class="hljs-title" href="#home">bad</a></li>
+                        <li class="breadcrumb-item hljs-title" aria-current="page">docs</li>
+                    </ol>
+                </nav>
+                <h2 class="section-title">Examples</h2>
                 <p class="section-subtitle">Complete real-world projects with executable code</p>
             </header>
 
@@ -374,7 +394,7 @@ git subtree pull --prefix=add/badhat FETCH_HEAD --squash</code></pre>
 
                 <div class="example-card">
                     <div class="example-card-body">
-                        <h2>Content Management (Blog Engine)</h2>
+                        <h3>Content Management (Blog Engine)</h3>
                         <pre><code class="language-php">&lt;?php
 // app/io/route/posts/edit.php
 use function bad\auth\checkin;
@@ -407,7 +427,7 @@ return function($args) {
 
                 <div class="example-card">
                     <div class="example-card-body">
-                        <h2>E-commerce Backend</h2>
+                        <h3>E-commerce Backend</h3>
                         <pre><code class="language-php">&lt;?php
 // app/io/route/admin/orders.php
 use function bad\auth\checkin;
@@ -439,7 +459,7 @@ return function($args) {
 
                 <div class="example-card">
                     <div class="example-card-body">
-                        <h2>JSON API</h2>
+                        <h3>JSON API</h3>
                         <pre><code class="language-php">&lt;?php
 // app/io/route/api/users.php
 use function bad\pdo\qp;
@@ -464,7 +484,7 @@ return function($args) {
 
                 <div class="example-card">
                     <div class="example-card-body">
-                        <h2>Dashboard Metrics</h2>
+                        <h3>Dashboard Metrics</h3>
                         <pre><code class="language-php">&lt;?php
 // app/io/route/dashboard/metrics.php
 use function bad\pdo\qp;
@@ -491,7 +511,7 @@ return function($args) {
 
                 <div class="example-card">
                     <div class="example-card-body">
-                        <h2>File Upload</h2>
+                        <h3>File Upload</h3>
                         <pre><code class="language-php">&lt;?php
 // app/io/route/files/upload.php
 use function bad\auth\checkin;
@@ -529,7 +549,7 @@ return function($args) {
 
                 <div class="example-card">
                     <div class="example-card-body">
-                        <h2>IoT Data Collector</h2>
+                        <h3>IoT Data Collector</h3>
                         <pre><code class="language-php">&lt;?php
 // app/io/route/api/sensors.php
 use function bad\pdo\qp;
@@ -558,7 +578,7 @@ return function($args) {
 
                 <div class="example-card">
                     <div class="example-card-body">
-                        <h2>Multi-tenant SaaS</h2>
+                        <h3>Multi-tenant SaaS</h3>
                         <pre><code class="language-php">&lt;?php
 // app/io/route/app/projects.php
 use function bad\pdo\{db, qp};
@@ -588,7 +608,7 @@ return function($args) {
 
                 <div class="example-card">
                     <div class="example-card-body">
-                        <h2>Transaction Example</h2>
+                        <h3>Transaction Example</h3>
                         <pre><code class="language-php">&lt;?php
 // app/io/route/trading/execute.php
 use function bad\auth\checkin;
@@ -628,7 +648,7 @@ return function($args) {
 
                 <div class="example-card-plain">
                     <div class="example-card-body">
-                        <h2>Scope Guidelines</h2>
+                        <h3>Scope Guidelines</h3>
                         <div class="scope-cols">
                             <div>
                                 <h3>Sweet Spot:</h3>

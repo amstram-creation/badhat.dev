@@ -146,10 +146,23 @@ body>main{
 
 /* ── MAIN ── */
 .breadcrumb {
-    color: var(--c-text-dim);
+    color: var(--c-accent);
     font-family: var(--mono);
     font-size: var(--fs-small);
-    padding: 20px var(--space-x) 0;
+    
+}
+.breadcrumb a{
+    text-decoration:none;
+}
+.breadcrumb-list {
+    list-style-type:none;
+    display:flex;
+}
+.breadcrumb-item::before {
+    content: "\\";
+    opacity: 0.7;
+    color:var(--c-accent);
+
 }
 
 .section-content {
