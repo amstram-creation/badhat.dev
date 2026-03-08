@@ -6,13 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>BADHAT — Bits As Decision. HTTP As Terminal.</title>
-    <meta name="description" content="Minimal PHP execution model built from files, includes, and explicit flow. No hidden lifecycle. No imposed architecture.">
+    <meta name="description"
+        content="Minimal PHP execution model built from files, includes, and explicit flow. No hidden lifecycle. No imposed architecture.">
 
     <meta property="og:title" content="BADHAT — Bits As Decision. HTTP As Terminal.">
-    <meta property="og:description" content="Minimal PHP execution model built from files, includes, and explicit flow. No hidden lifecycle. No imposed architecture.">
+    <meta property="og:description"
+        content="Minimal PHP execution model built from files, includes, and explicit flow. No hidden lifecycle. No imposed architecture.">
 
     <meta name="twitter:title" content="BADHAT — Bits As Decision. HTTP As Terminal.">
-    <meta name="twitter:description" content="Minimal PHP execution model built from files, includes, and explicit flow. No hidden lifecycle. No imposed architecture.">
+    <meta name="twitter:description"
+        content="Minimal PHP execution model built from files, includes, and explicit flow. No hidden lifecycle. No imposed architecture.">
 
     <link rel="canonical" href="https://badhat.dev/">
 
@@ -90,31 +93,26 @@
                 </ol>
             </nav>
             <header>
-
                 <h2 class="section-title">Quickstart</h2>
                 <p class="section-subtitle">Get BADHAT running in five minutes</p>
             </header>
 
             <div class="qs-step">
-                <h2>1. Initialize Project</h2>
-                <pre><code class="language-bash">mkdir myproject && cd myproject
+                <h3>1. Initialize Project</h3>
+                <pre><code class="language-bash">mkdir DOCUMENT_ROOT && cd DOCUMENT_ROOT
 git init
-mkdir -p app/io/{route,render} public
-touch .gitignore</code></pre>
+git submodule add --depth 1 git@github.com:lareponse/badhat.git add/badhat
+mkdir -p app public
+touch public/index.php</code></pre>
+
+                <pre><code>/
+├── /add/badhat/
+├── /app/
+└── /public/index.php</code></pre>
             </div>
 
             <div class="qs-step">
-                <h2>2. Add BADHAT Core via Subtree</h2>
-                <pre><code class="language-bash">git fetch --depth=1 git@github.com:lareponse/BADHAT.git main
-git subtree add --prefix=add/badhat FETCH_HEAD --squash</code></pre>
-                <ul>
-                    <li>--squash garde BADHAT comme un seul commit</li>
-                    <li>--depth=1 garde le fetch léger</li>
-                </ul>
-            </div>
-
-            <div class="qs-step">
-                <h2>3. Create Entry Point (Canonical)</h2>
+                <h3>2. Create Entry Points</h3>
                 <pre><code class="language-php">&lt;?php
 // public/index.php — BADHAT Entry Point
 set_include_path(__DIR__ . '/..' . PATH_SEPARATOR . get_include_path());
@@ -175,23 +173,7 @@ exit(out(404, 'Not Found'));</code></pre>
             </div>
 
             <div class="qs-step">
-                <h2>4. Environment Config</h2>
-                <pre><code class="language-bash"># .env (not tracked)
-cat > .env &lt;&lt; 'EOF'
-DB_DSN_=sqlite:db.sqlite
-DB_USER_=
-DB_PASS_=
-EOF
-
-# .gitignore
-cat > .gitignore &lt;&lt; 'EOF'
-.env
-*.sqlite
-EOF</code></pre>
-            </div>
-
-            <div class="qs-step">
-                <h2>5. Sample Route</h2>
+                <h3>5. Sample Route</h3>
                 <pre><code class="language-php">&lt;?php
 // app/io/route/users.php
 use function bad\pdo\qp;
@@ -211,7 +193,7 @@ return function (array $args) {
             </div>
 
             <div class="qs-step">
-                <h2>6. Sample Render</h2>
+                <h3>6. Sample Render</h3>
                 <pre><code class="language-php">&lt;?php
 // app/io/render/users.php
 $users = $args['users'] ?? [];
@@ -238,13 +220,13 @@ return function (array $loot, array $args) {
             </div>
 
             <div class="qs-step">
-                <h2>7. First Commit</h2>
+                <h3>7. First Commit</h3>
                 <pre><code class="language-bash">git add .
 git commit -m "Initial BADHAT project"</code></pre>
             </div>
 
             <div class="qs-step">
-                <h2>8. Project Structure</h2>
+                <h3>8. Project Structure</h3>
                 <pre><code class="language-plaintext">myproject/
 ├── .gitignore
 ├── .env
@@ -263,13 +245,13 @@ git commit -m "Initial BADHAT project"</code></pre>
             </div>
 
             <div class="qs-step">
-                <h2>9. Test</h2>
+                <h3>9. Test</h3>
                 <pre><code class="language-bash">cd public
 php -S localhost:8000</code></pre>
             </div>
 
             <div class="qs-step">
-                <h2>10. Update BADHAT Core</h2>
+                <h3>10. Update BADHAT Core</h3>
                 <pre><code class="language-bash">git fetch --depth=1 git@github.com:lareponse/BADHAT.git main
 git subtree pull --prefix=add/badhat FETCH_HEAD --squash</code></pre>
                 <ul>
@@ -694,4 +676,5 @@ return function($args) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
 </body>
+
 </html>
