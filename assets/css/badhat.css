@@ -95,19 +95,19 @@ body>main{
 /* ── SIDEBAR ── */
 .site-header {
     background: #080808;
+    background: rgba(255, 255, 255, 0.05);
     border-right: 1px solid var(--c-border);
     display: flex;
-    gap: var(--space-y);
     flex-direction: column;
     padding: var(--space-block);
+    text-align:center;
 }
 
 
 
 .logo img {
-    width: 72px;
+    width: 100%;
     height: auto;
-    display: block;
 }
 
 .sidebar-nav ul {
@@ -282,7 +282,7 @@ body>main{
     color: var(--c-text-hard);
 }
 
-/* ── QUICKSTART ── */
+/* ── BOOT ── */
 .qs-step {
     margin-bottom: 52px;
 }
