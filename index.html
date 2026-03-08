@@ -117,24 +117,141 @@ touch public/index.php</code></pre>
 
                 </li>
 
-                <li class="qs-step">
-                    <strong>Create Entry Points</strong>
+                <li class="qs-step boot-step has-trap has-http has-pdo has-auth has-csrf is-route-mode-seek is-route-base-ascend is-render-mode-look is-render-base-rebase needs-map-rebase"
+                    data-boot-step>
+                    <strong>Create Entry Point</strong>
 
-                    <form class="qs-options">
+                    <form class="qs-options" autocomplete="off">
                         <fieldset class="qs-modules">
                             <legend>Modules</legend>
+
                             <label><input type="checkbox" checked disabled> map</label>
                             <label><input type="checkbox" checked disabled> run</label>
-                            <label><input type="checkbox" data-module="http" checked>HTTP</label>
-                            <label><input type="checkbox" data-module="trap" checked>errors handling</label>
-                            <label><input type="checkbox" data-module="pdo" checked>database</label>
-                            <label><input type="checkbox" data-module="auth"> basic auth</label>
-                            <label><input type="checkbox" data-module="csrf">CSRF</label>
-                            <label><input type="checkbox" data-module="rfc">RFC</label>
+                            <label><input type="checkbox" name="trap" checked> trap</label>
+                            <label><input type="checkbox" name="http" checked> HTTP</label>
+                            <label><input type="checkbox" name="pdo" checked> PDO</label>
+                            <label><input type="checkbox" name="auth" checked> auth</label>
+                            <label><input type="checkbox" name="csrf" checked> CSRF</label>
+                        </fieldset>
+
+                        <fieldset class="qs-phase">
+                            <legend>Route phase</legend>
+
+                            <div class="qs-phase-row">
+                                <span class="qs-phase-label">lookup</span>
+                                <label><input type="radio" name="route-mode" value="seek" checked> seek</label>
+                                <label><input type="radio" name="route-mode" value="look"> look</label>
+                            </div>
+
+                            <div class="qs-phase-row" data-base-group="route">
+                                <span class="qs-phase-label">base</span>
+                                <label><input type="radio" name="route-base" value="ascend" checked> ASCEND</label>
+                                <label><input type="radio" name="route-base" value="rebase"> REBASE</label>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="qs-phase">
+                            <legend>Render phase</legend>
+
+                            <div class="qs-phase-row">
+                                <span class="qs-phase-label">lookup</span>
+                                <label><input type="radio" name="render-mode" value="look" checked> look</label>
+                                <label><input type="radio" name="render-mode" value="seek"> seek</label>
+                            </div>
+
+                            <div class="qs-phase-row" data-base-group="render">
+                                <span class="qs-phase-label">base</span>
+                                <label><input type="radio" name="render-base" value="ascend"> ASCEND</label>
+                                <label><input type="radio" name="render-base" value="rebase" checked> REBASE</label>
+                            </div>
                         </fieldset>
                     </form>
 
-                    <pre><code class="language-php" data-entry-code></code></pre>
+                    <pre><code class="hljs language-php nohighlight" data-entry-code>
+<span class="line"><span class="hljs-meta">&lt;?php</span></span>
+<span class="line"><span class="hljs-comment">// public/index.php — BADHAT Entry Point</span></span>
+<span class="line"></span>
+<span class="line"><span class="hljs-title function_">set_include_path</span>(<span class="hljs-variable language_">__DIR__</span> . <span class="hljs-string">'/..'</span> . <span class="hljs-constant">PATH_SEPARATOR</span> . <span class="hljs-title function_">get_include_path</span>());</span>
+<span class="line"></span>
+<span class="line line-module-trap"><span class="hljs-variable">$install</span> = <span class="hljs-keyword">require</span> <span class="hljs-string">'add/badhat/trap.php'</span>;</span>
+<span class="line line-module-map"><span class="hljs-keyword">require</span> <span class="hljs-string">'add/badhat/map.php'</span>;</span>
+<span class="line line-module-run"><span class="hljs-keyword">require</span> <span class="hljs-string">'add/badhat/run.php'</span>;</span>
+<span class="line line-module-http"><span class="hljs-keyword">require</span> <span class="hljs-string">'add/badhat/http.php'</span>;</span>
+<span class="line line-module-pdo"><span class="hljs-keyword">require</span> <span class="hljs-string">'add/badhat/pdo.php'</span>;</span>
+<span class="line line-module-auth"><span class="hljs-keyword">require</span> <span class="hljs-string">'add/badhat/auth.php'</span>;</span>
+<span class="line line-module-csrf"><span class="hljs-keyword">require</span> <span class="hljs-string">'add/badhat/csrf.php'</span>;</span>
+<span class="line"></span>
+<span class="line line-use-map-rebase"><span class="hljs-keyword">use const</span> bad\map\<span class="hljs-attr">REBASE</span>;</span>
+<span class="line line-use-run"><span class="hljs-keyword">use const</span> bad\run\{<span class="hljs-attr">INVOKE</span>, <span class="hljs-attr">BUFFER</span>, <span class="hljs-attr">RESULT</span>};</span>
+<span class="line line-use-http"><span class="hljs-keyword">use const</span> bad\http\<span class="hljs-attr">ONE</span>;</span>
+<span class="line"></span>
+<span class="line"><span class="hljs-comment">// --------------------------------------------------</span></span>
+<span class="line"><span class="hljs-comment">// Bootstrap</span></span>
+<span class="line"><span class="hljs-comment">// --------------------------------------------------</span></span>
+<span class="line"></span>
+<span class="line line-trap-runtime"><span class="hljs-variable">$restore</span> = <span class="hljs-variable">$install</span>(bad\trap\<span class="hljs-attr">HND_ALL</span>);</span>
+<span class="line"><span class="hljs-title function_">session_start</span>();</span>
+<span class="line"></span>
+<span class="line line-pdo-runtime"><span class="hljs-variable">$pdo</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">PDO</span>(</span>
+<span class="line line-pdo-runtime">    <span class="hljs-title function_">getenv</span>(<span class="hljs-string">'DB_DSN'</span>)  ?: <span class="hljs-string">'mysql:host=127.0.0.1;dbname=app;charset=utf8mb4'</span>,</span>
+<span class="line line-pdo-runtime">    <span class="hljs-title function_">getenv</span>(<span class="hljs-string">'DB_USER'</span>) ?: <span class="hljs-string">'cred_username'</span>,</span>
+<span class="line line-pdo-runtime">    <span class="hljs-title function_">getenv</span>(<span class="hljs-string">'DB_PASS'</span>) ?: <span class="hljs-string">'cred_password'</span>,</span>
+<span class="line line-pdo-runtime">    [</span>
+<span class="line line-pdo-runtime">        <span class="hljs-title class_">PDO</span>::<span class="hljs-attr">ATTR_ERRMODE</span>            =&gt; <span class="hljs-title class_">PDO</span>::<span class="hljs-attr">ERRMODE_EXCEPTION</span>,</span>
+<span class="line line-pdo-runtime">        <span class="hljs-title class_">PDO</span>::<span class="hljs-attr">ATTR_DEFAULT_FETCH_MODE</span> =&gt; <span class="hljs-title class_">PDO</span>::<span class="hljs-attr">FETCH_ASSOC</span>,</span>
+<span class="line line-pdo-runtime">        <span class="hljs-title class_">PDO</span>::<span class="hljs-attr">ATTR_EMULATE_PREPARES</span>   =&gt; <span class="hljs-literal">false</span>,</span>
+<span class="line line-pdo-runtime">    ]</span>
+<span class="line line-pdo-runtime">);</span>
+<span class="line"></span>
+<span class="line line-pdo-runtime">bad\pdo\<span class="hljs-title function_">db</span>(<span class="hljs-variable">$pdo</span>);</span>
+<span class="line"></span>
+<span class="line line-auth-runtime"><span class="hljs-comment">// auth setup (optional)</span></span>
+<span class="line line-auth-runtime"><span class="hljs-variable">$select</span> = bad\pdo\<span class="hljs-title function_">qp</span>(<span class="hljs-string">"SELECT password FROM users WHERE username = ?"</span>, []);</span>
+<span class="line line-auth-runtime"><span class="hljs-variable">$update</span> = bad\pdo\<span class="hljs-title function_">qp</span>(<span class="hljs-string">"UPDATE users SET last_login = NOW() WHERE username = ?"</span>, []);</span>
+<span class="line line-auth-runtime">bad\auth\<span class="hljs-title function_">checkin</span>(<span class="hljs-literal">null</span>, <span class="hljs-literal">null</span>, <span class="hljs-variable">$update</span>, <span class="hljs-variable">$select</span>);</span>
+<span class="line"></span>
+<span class="line"><span class="hljs-comment">// --------------------------------------------------</span></span>
+<span class="line"><span class="hljs-comment">// Normalize request path</span></span>
+<span class="line"><span class="hljs-comment">// --------------------------------------------------</span></span>
+<span class="line"></span>
+<span class="line"><span class="hljs-variable">$io_root</span> = <span class="hljs-variable language_">__DIR__</span> . <span class="hljs-string">'/../app/io'</span>;</span>
+<span class="line"><span class="hljs-variable">$base</span> = <span class="hljs-title function_">realpath</span>(<span class="hljs-variable">$io_root</span> . <span class="hljs-string">'/route'</span>) . <span class="hljs-string">'/'</span>;</span>
+<span class="line"><span class="hljs-variable">$key</span> = bad\map\<span class="hljs-title function_">hook</span>(<span class="hljs-variable language_">$_SERVER</span>[<span class="hljs-string">'REQUEST_URI'</span>], <span class="hljs-string">"\0"</span>);</span>
+<span class="line"></span>
+<span class="line"><span class="hljs-comment">// --------------------------------------------------</span></span>
+<span class="line"><span class="hljs-comment">// Phase 1 — Route (logic)</span></span>
+<span class="line"><span class="hljs-comment">// --------------------------------------------------</span></span>
+<span class="line"></span>
+<span class="line line-route-seek"><span class="hljs-variable">$route</span> = bad\map\<span class="hljs-title function_">seek</span>(<span class="hljs-variable">$base</span>, <span class="hljs-variable">$key</span>, <span class="hljs-string">'.php'</span><span class="route-seek-rebase-fragment">, <span class="hljs-attr">REBASE</span></span>);</span>
+<span class="line line-route-look"><span class="hljs-variable">$route</span> = bad\map\<span class="hljs-title function_">look</span>(<span class="hljs-variable">$base</span>, <span class="hljs-variable">$key</span>, <span class="hljs-string">'.php'</span>, <span class="hljs-attr">REBASE</span>);</span>
+<span class="line"><span class="hljs-variable">$loot</span>  = [];</span>
+<span class="line"></span>
+<span class="line"><span class="hljs-keyword">if</span> (<span class="hljs-variable">$route</span>) {</span>
+<span class="line">    [<span class="hljs-variable">$file</span>, <span class="hljs-variable">$args</span>] = <span class="hljs-variable">$route</span>;</span>
+<span class="line">    <span class="hljs-variable">$loot</span> = bad\run\<span class="hljs-title function_">loot</span>([<span class="hljs-variable">$file</span>], <span class="hljs-variable">$args</span>, <span class="hljs-attr">INVOKE</span>);</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line"><span class="hljs-comment">// --------------------------------------------------</span></span>
+<span class="line"><span class="hljs-comment">// Phase 2 — Render (presentation)</span></span>
+<span class="line"><span class="hljs-comment">// --------------------------------------------------</span></span>
+<span class="line"></span>
+<span class="line line-render-look"><span class="hljs-variable">$render</span> = bad\map\<span class="hljs-title function_">look</span>(<span class="hljs-variable">$io_root</span> . <span class="hljs-string">'/render/'</span>, <span class="hljs-variable">$key</span>, <span class="hljs-string">'.php'</span>, <span class="hljs-attr">REBASE</span>);</span>
+<span class="line line-render-seek"><span class="hljs-variable">$render</span> = bad\map\<span class="hljs-title function_">seek</span>(<span class="hljs-variable">$io_root</span> . <span class="hljs-string">'/render/'</span>, <span class="hljs-variable">$key</span>, <span class="hljs-string">'.php'</span><span class="render-seek-rebase-fragment">, <span class="hljs-attr">REBASE</span></span>);</span><span class="line"></span>
+<span class="line"><span class="hljs-keyword">if</span> (<span class="hljs-variable">$render</span>) {</span>
+<span class="line">    <span class="hljs-variable">$loot</span> = bad\run\<span class="hljs-title function_">loot</span>([<span class="hljs-variable">$render</span>], <span class="hljs-variable">$loot</span>, <span class="hljs-attr">BUFFER</span> | <span class="hljs-attr">INVOKE</span>);</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line"><span class="hljs-comment">// --------------------------------------------------</span></span>
+<span class="line"><span class="hljs-comment">// Output</span></span>
+<span class="line"><span class="hljs-comment">// --------------------------------------------------</span></span>
+<span class="line"></span>
+<span class="line"><span class="hljs-keyword">if</span> (<span class="hljs-title function_">isset</span>(<span class="hljs-variable">$loot</span>[<span class="hljs-attr">RESULT</span>]) &amp;&amp; <span class="hljs-title function_">is_string</span>(<span class="hljs-variable">$loot</span>[<span class="hljs-attr">RESULT</span>])) {</span>
+<span class="line line-http-runtime">    bad\http\<span class="hljs-title function_">headers</span>(<span class="hljs-attr">ONE</span>, <span class="hljs-string">'Content-Type'</span>, <span class="hljs-string">'text/html; charset=utf-8'</span>);</span>
+<span class="line line-http-runtime">    <span class="hljs-keyword">exit</span>(bad\http\<span class="hljs-title function_">out</span>(<span class="hljs-number">200</span>, <span class="hljs-variable">$loot</span>[<span class="hljs-attr">RESULT</span>]));</span>
+<span class="line">}</span>
+<span class="line"></span>
+<span class="line line-http-runtime"><span class="hljs-keyword">exit</span>(bad\http\<span class="hljs-title function_">out</span>(<span class="hljs-number">404</span>, <span class="hljs-string">'Not Found'</span>));</span>
+            </code></pre>
                 </li>
 
                 <li class="qs-step">

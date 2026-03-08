@@ -1,277 +1,128 @@
-'use strict';
+// boot.js
+(() => {
+    const STATES = {
+        routeMode: ['seek', 'look'],
+        routeBase: ['ascend', 'rebase'],
+        renderMode: ['look', 'seek'],
+        renderBase: ['ascend', 'rebase'],
+    };
 
-const DEFAULT_ROOT = 'DOCUMENT_ROOT';
-const originals = new WeakMap();
+    const boolClass = (step, name, enabled) => {
+        step.classList.toggle(`has-${name}`, enabled);
+        step.classList.toggle(`no-${name}`, !enabled);
+    };
 
-const qs = (selector, root = document) => root.querySelector(selector);
-const qsa = (selector, root = document) => Array.from(root.querySelectorAll(selector));
-
-function getOriginalText(node) {
-    if (!originals.has(node)) {
-        originals.set(node, node.textContent);
-    }
-    return originals.get(node);
-}
-
-function rehighlight(code) {
-    if (!code || !window.hljs?.highlightElement) return;
-
-    code.removeAttribute('data-highlighted');
-    window.hljs.highlightElement(code);
-}
-
-function rehighlightAll(root = document) {
-    qsa('pre code', root).forEach(rehighlight);
-}
-
-function renderRoot(step) {
-    const input = qs('[data-root-input]', step);
-    if (!input) return;
-
-    const value = input.value.trim() || DEFAULT_ROOT;
-    const codes = qsa('pre code:not([data-entry-code])', step);
-
-    codes.forEach((code) => {
-        const next = getOriginalText(code).replaceAll(DEFAULT_ROOT, value);
-
-        if (code.textContent !== next) {
-            code.textContent = next;
-            rehighlight(code);
-        }
-    });
-}
-
-function isChecked(step, name) {
-    return !!qs(`[data-module="${name}"]`, step)?.checked;
-}
-
-function renderEntryPoint(step) {
-    const entryCode = qs('[data-entry-code]', step);
-    if (!entryCode) return;
-
-    const requireLines = [];
-    const useLines = [];
-    const constLines = [];
-    const bodyLines = [];
-
-    if (isChecked(step, 'trap')) {
-        requireLines.push(`$install = require 'add/badhat/trap.php';`);
-        constLines.push(`use const bad\\trap\\HND_ALL;`);
-    }
-
-    requireLines.push(`require 'add/badhat/map.php';`);
-    requireLines.push(`require 'add/badhat/run.php';`);
-
-    if (isChecked(step, 'http')) {
-        requireLines.push(`require 'add/badhat/http.php';`);
-        useLines.push(`use function bad\\http\\{headers, out};`);
-        constLines.push(`use const bad\\http\\ONE;`);
-    }
-
-    if (isChecked(step, 'pdo')) {
-        requireLines.push(`require 'add/badhat/pdo.php';`);
-        useLines.push(`use function bad\\pdo\\db;`);
-    }
-
-    if (isChecked(step, 'auth')) {
-        requireLines.push(`require 'add/badhat/auth.php';`);
-    }
-
-    if (isChecked(step, 'csrf')) {
-        requireLines.push(`require 'add/badhat/csrf.php';`);
-    }
-
-    if (isChecked(step, 'rfc')) {
-        requireLines.push(`require 'add/badhat/rfc.php';`);
-    }
-
-    useLines.push(`use function bad\\map\\{hook, seek, look};`);
-    useLines.push(`use function bad\\run\\loot;`);
-
-    constLines.push(`use const bad\\map\\REBASE;`);
-    constLines.push(`use const bad\\run\\{INVOKE, BUFFER, RESULT};`);
-
-    if (isChecked(step, 'trap')) {
-        bodyLines.push(`$install(HND_ALL);`);
-        bodyLines.push(``);
-    }
-
-    if (isChecked(step, 'pdo')) {
-        bodyLines.push(
-            `$pdo = new PDO(
-    getenv('DB_DSN_')  ?: 'sqlite:' . __DIR__ . '/../db.sqlite',
-    getenv('DB_USER_') ?: null,
-    getenv('DB_PASS_') ?: null,
-    [
-        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    ]
-);
-db($pdo);`
-        );
-        bodyLines.push(``);
-    }
-
-    if (isChecked(step, 'auth')) {
-        bodyLines.push(`// auth bootstrap here`);
-        bodyLines.push(``);
-    }
-
-    if (isChecked(step, 'csrf')) {
-        bodyLines.push(`// csrf bootstrap here`);
-        bodyLines.push(``);
-    }
-
-    if (isChecked(step, 'rfc')) {
-        bodyLines.push(`// rfc helpers available`);
-        bodyLines.push(``);
-    }
-
-    bodyLines.push(
-        `$io   = __DIR__ . '/../app/io';
-$base = realpath($io . '/route') . '/';
-$key  = hook($_SERVER['REQUEST_URI'], "\\0");
-
-$loot = [];
-$route = seek($base, $key, '.php');
-if ($route) {
-    [$file, $args] = $route;
-    $loot = loot([$file], $args, INVOKE);
-}
-
-$render = look($io . '/render/', $key, '.php', REBASE);
-if ($render) {
-    $loot = loot([$render], $loot, BUFFER | INVOKE);
-}`
-    );
-
-    bodyLines.push(``);
-
-    if (isChecked(step, 'http')) {
-        bodyLines.push(
-            `if (isset($loot[RESULT]) && is_string($loot[RESULT])) {
-    headers(ONE, 'Content-Type', 'text/html; charset=utf-8');
-    exit(out(200, $loot[RESULT]));
-}
-
-exit(out(404, 'Not Found'));`
-        );
-    } else {
-        bodyLines.push(
-            `if (isset($loot[RESULT]) && is_string($loot[RESULT])) {
-    exit($loot[RESULT]);
-}
-
-http_response_code(404);
-exit('Not Found');`
-        );
-    }
-
-    const php = [
-        `<?php`,
-        `// public/index.php — BADHAT entry point`,
-        `set_include_path(__DIR__ . '/..' . PATH_SEPARATOR . get_include_path());`,
-        ``,
-        ...requireLines,
-        ``,
-        ...useLines,
-        ...constLines,
-        ``,
-        `// Bootstrap`,
-        ...bodyLines
-    ].join('\n');
-
-    if (entryCode.textContent !== php) {
-        entryCode.textContent = php;
-        rehighlight(entryCode);
-    }
-}
-
-function initQuickstart() {
-    qsa('.qs-step').forEach((step) => {
-        renderRoot(step);
-        renderEntryPoint(step);
-    });
-}
-
-function bindQuickstartEvents() {
-    document.addEventListener('input', (event) => {
-        const input = event.target.closest('[data-root-input]');
-        if (!input) return;
-
-        const step = input.closest('.qs-step');
-        if (!step) return;
-
-        renderRoot(step);
-    });
-
-    document.addEventListener('change', (event) => {
-        const toggle = event.target.closest('[data-module]');
-        if (!toggle) return;
-
-        const step = toggle.closest('.qs-step');
-        if (!step) return;
-
-        renderEntryPoint(step);
-    });
-}
-
-function bindSmoothScrollButtons() {
-    document.addEventListener('click', (event) => {
-        const button = event.target.closest('[data-scroll-target]');
-        if (!button) return;
-
-        const id = button.dataset.scrollTarget;
-        const target = document.getElementById(id);
-        if (!target) return;
-
-        event.preventDefault();
-        target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
+    const enumClass = (step, prefix, value, allowed) => {
+        allowed.forEach(option => {
+            step.classList.remove(`is-${prefix}-${option}`);
         });
-    });
-}
+        if (value) step.classList.add(`is-${prefix}-${value}`);
+    };
 
-function initSectionObserver() {
-    const sections = qsa('section[id]');
-    const navLinks = qsa('.sidebar-nav a');
+    const checkedValue = (step, name) => {
+        const input = step.querySelector(`input[name="${name}"]:checked`);
+        return input ? input.value : null;
+    };
 
-    if (!sections.length || !navLinks.length) return;
+    const setChecked = (step, name, value) => {
+        const input = step.querySelector(`input[name="${name}"][value="${value}"]`);
+        if (input) input.checked = true;
+    };
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
+    const syncModeBaseRules = (step, phase) => {
+        const mode = checkedValue(step, `${phase}-mode`);
+        const baseRow = step.querySelector(`[data-base-group="${phase}"]`);
+        const ascend = step.querySelector(`input[name="${phase}-base"][value="ascend"]`);
+        const rebase = step.querySelector(`input[name="${phase}-base"][value="rebase"]`);
 
-            navLinks.forEach((link) => link.classList.remove('active'));
+        if (!baseRow || !ascend || !rebase) return;
 
-            const active = qs(`.sidebar-nav a[href="#${entry.target.id}"]`);
-            if (active) {
-                active.classList.add('active');
+        baseRow.classList.remove('is-disabled');
+
+        if (mode === 'look') {
+            ascend.disabled = true;
+            rebase.disabled = false;
+
+            const ascendLabel = ascend.closest('label');
+            const rebaseLabel = rebase.closest('label');
+
+            if (ascendLabel) ascendLabel.classList.add('is-disabled');
+            if (rebaseLabel) rebaseLabel.classList.remove('is-disabled');
+
+            if (ascend.checked) {
+                rebase.checked = true;
             }
+        } else {
+            ascend.disabled = false;
+            rebase.disabled = false;
+
+            const ascendLabel = ascend.closest('label');
+            const rebaseLabel = rebase.closest('label');
+
+            if (ascendLabel) ascendLabel.classList.remove('is-disabled');
+            if (rebaseLabel) rebaseLabel.classList.remove('is-disabled');
+
+            if (!ascend.checked && !rebase.checked) {
+                setChecked(step, `${phase}-base`, 'ascend');
+            }
+        }
+    };
+
+    const syncDependencies = step => {
+        const pdo = step.querySelector('input[name="pdo"]');
+        const auth = step.querySelector('input[name="auth"]');
+
+        if (pdo && auth) {
+            auth.disabled = !pdo.checked;
+
+            const authLabel = auth.closest('label');
+            if (authLabel) authLabel.classList.toggle('is-disabled', !pdo.checked);
+
+            if (!pdo.checked) {
+                auth.checked = false;
+            }
+        }
+
+        syncModeBaseRules(step, 'route');
+        syncModeBaseRules(step, 'render');
+    };
+
+    const syncRebaseUsage = step => {
+        const routeBase = checkedValue(step, 'route-base');
+        const renderBase = checkedValue(step, 'render-base');
+
+        const needsRebase =
+            routeBase === 'rebase' ||
+            renderBase === 'rebase';
+
+        step.classList.toggle('needs-map-rebase', needsRebase);
+        step.classList.toggle('no-map-rebase', !needsRebase);
+    };
+
+    const syncStep = step => {
+        syncDependencies(step);
+
+        boolClass(step, 'trap', !!step.querySelector('input[name="trap"]')?.checked);
+        boolClass(step, 'http', !!step.querySelector('input[name="http"]')?.checked);
+        boolClass(step, 'pdo', !!step.querySelector('input[name="pdo"]')?.checked);
+        boolClass(step, 'auth', !!step.querySelector('input[name="auth"]')?.checked);
+        boolClass(step, 'csrf', !!step.querySelector('input[name="csrf"]')?.checked);
+
+        enumClass(step, 'route-mode', checkedValue(step, 'route-mode'), STATES.routeMode);
+        enumClass(step, 'route-base', checkedValue(step, 'route-base'), STATES.routeBase);
+        enumClass(step, 'render-mode', checkedValue(step, 'render-mode'), STATES.renderMode);
+        enumClass(step, 'render-base', checkedValue(step, 'render-base'), STATES.renderBase);
+
+        syncRebaseUsage(step);
+    };
+
+    const initStep = step => {
+        step.querySelectorAll('input').forEach(input => {
+            input.addEventListener('change', () => syncStep(step));
         });
-    }, {
-        threshold: 0,
-        rootMargin: '0px 0px -80% 0px'
-    });
 
-    sections.forEach((section) => observer.observe(section));
-}
+        syncStep(step);
+    };
 
-function init() {
-    bindQuickstartEvents();
-    bindSmoothScrollButtons();
-    initQuickstart();
-    initSectionObserver();
-    rehighlightAll();
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init, { once: true });
-} else {
-    init();
-}
-
-window.addEventListener('load', () => {
-    rehighlightAll();
-}, { once: true });
+    document.querySelectorAll('[data-boot-step]').forEach(initStep);
+})();
